@@ -14,7 +14,13 @@
       "settings": {
         "terminal.integrated.defaultProfile.linux": "bash"
       },
-      "extensions": ["mshr-h.veriloghdl", "surfer-project.surfer"]
+      "extensions": [
+        "mshr-h.veriloghdl",
+        "surfer-project.surfer",
+        "ms-python.vscode-pylance",
+        "ms-python.python",
+        "ms-python.debugpy"
+      ]
     }
   },
   "features": {
