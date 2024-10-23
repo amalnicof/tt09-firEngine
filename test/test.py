@@ -3,14 +3,16 @@
 
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import ClockCycles, FallingEdge, RisingEdge
 from cocotb.handle import SimHandleBase
+from cocotb.triggers import ClockCycles, FallingEdge, RisingEdge
+
 
 async def resetCore(dut: SimHandleBase) -> None:
     dut.rst_n.value = 0
     await ClockCycles(dut.clk, 2)
     dut.rst_n.value = 1
     await ClockCycles(dut.clk, 2)
+
 
 class SPIModel(object):
     def __init__(self, dut: SimHandleBase) -> None:
@@ -30,25 +32,26 @@ class SPIModel(object):
         self.cs.value = 0
 
         for i, byte in enumerate(data):
-            if i == len(data)-1:
+            if i == len(data) - 1:
                 stop = dropTail
             else:
                 stop = 8
 
             for j in range(stop):
                 FallingEdge(self.sclk)
-                # self
-        pass
-    pass
+                self.mosi.value = (byte >> j) & 0x1
+
+        FallingEdge(self.sclk)
+        self.cs.value = 1
 
 
 @cocotb.test()
 async def test_project(dut: SimHandleBase):
+    dut._log.info("===================\nFIREngine Testbench\n===================")
+
     # Set the clock period to 20ns 50MHz
     clock = Clock(dut.clk, 20, units="ns")
     cocotb.start_soon(clock.start())
-
-
 
     await resetCore(dut)
     return
