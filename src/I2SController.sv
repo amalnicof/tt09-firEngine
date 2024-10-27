@@ -175,7 +175,7 @@ module I2SController #(
         end
 
         SHIFT_S: begin
-          if (samplePulse && lrckCounter <= 5'(SerialDataWidth - DataWidth)) begin
+          if (samplePulse && lrckCounter <= 5'(DataWidth)) begin
             adcData <= {adcData[DataWidth-2:0], adcQ};
           end
 

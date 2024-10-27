@@ -185,7 +185,7 @@ module fir #(
       default: mux_out = 2'b0;
     endcase
 
-    if (bit_cnt == 11) begin
+    if (bit_cnt == DataWidth - 1) begin
       // Sign should be subtraction
       acc_in = accQ - mux_out;
     end else begin
@@ -207,7 +207,7 @@ module fir #(
   end
 
   // Output value
-  wire signed [  DataWidth:0] yInt = accQ >>> (DataWidth - 1);
+  wire signed [DataWidth+1:0] yInt = accQ >>> (DataWidth - 1);
   wire signed [DataWidth-1:0] yIntPart = yInt[DataWidth-1:0];
   always_comb begin
     // Remove fractional bits

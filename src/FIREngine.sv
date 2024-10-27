@@ -8,9 +8,9 @@
 
 module FIREngine #(
     parameter integer NTaps = 9,
+    parameter integer DataWidth = 12,
 
-    localparam integer ClockConfigWidth = 4,
-    localparam integer DataWidth = 12
+    localparam integer ClockConfigWidth = 4
 ) (
     input wire clk,
     input wire resetN,

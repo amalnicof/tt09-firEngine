@@ -22,25 +22,27 @@ module tt_um_arandomdev_fir_engine_top (
   wire lrck;
   wire sclk;
   wire dac;
-  wire adc = uio_in[3];
+  wire adc = uio_in[7];
 
   wire cs = ui_in[0];
   wire mosi = ui_in[1];
   wire spiClk = ui_in[3];
 
   assign uio_out[0] = mclk;
-  assign uio_out[4] = mclk;
   assign uio_out[1] = lrck;
-  assign uio_out[5] = lrck;
   assign uio_out[2] = sclk;
+  assign uio_out[3] = dac;
+  assign uio_out[4] = mclk;
+  assign uio_out[5] = lrck;
   assign uio_out[6] = sclk;
-  assign uio_out[7] = dac;
+  assign uio_out[7] = 1'b0;
 
-  assign uio_oe = 8'b11110111;
+  assign uio_oe = 8'b01111111;
   assign uo_out = 8'b0;
 
   FIREngine #(
-      .NTaps(9)
+      .NTaps(13),
+      .DataWidth(8)
   ) firEngine (
       .clk(clk),
       .resetN(rst_n),
