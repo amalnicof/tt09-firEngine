@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import Generator, TypedDict, cast
 
 import cocotb
+import cocotb.triggers
 import cocotb.utils
 import debugpy
 import numpy as np
@@ -12,7 +13,7 @@ from cocotb.triggers import ClockCycles, FallingEdge, RisingEdge
 from fxpmath import Fxp
 from fxpmath.utils import twos_complement_repr
 
-DEBUGGING = True
+DEBUGGING = False
 
 CLOCK_PERIOD = 20
 SERIAL_DATA_WIDTH = 24
@@ -62,6 +63,14 @@ class Constants(object):
     @property
     def dataSampleShift(self) -> int:
         return SERIAL_DATA_WIDTH - self.dataWidth
+
+
+GATE_LEVEL_SIM_PARAMETERS = Constants(
+    nTaps=13,
+    dataWidth=8,
+    clockConfigWidth=4,
+    symCoeffsWidth=1,
+)
 
 
 def generateConfig(
@@ -142,12 +151,15 @@ async def resetCore(dut: SimHandleBase) -> None:
 
 class SPIModel(object):
     def __init__(self, dut: SimHandleBase) -> None:
-        self.spiClk = dut.top.spiClk
-        self.mosi = dut.top.mosi
-        self.cs = dut.top.cs
+        self.spiClk = dut.spiClk
+        self.mosi = dut.mosi
+        self.cs = dut.cs
+
+        self.cs.value = 1
+        self.mosi.value = 0
 
         # 1MHz clock
-        clock = Clock(self.spiClk, 500, units="ns")
+        clock = Clock(dut.spiClk, 500, units="ns")
         cocotb.start_soon(clock.start())
 
     async def sendData(self, data: bytes) -> None:
@@ -158,28 +170,30 @@ class SPIModel(object):
         await RisingEdge(self.spiClk)
         self.cs.value = 0
 
-        for i, byte in enumerate(data):
+        for byte in data:
             for j in range(8):
                 await FallingEdge(self.spiClk)
                 self.mosi.value = (byte >> (8 - 1 - j)) & 0x1
 
         await FallingEdge(self.spiClk)
         self.cs.value = 1
+        self.mosi.value = 0
 
 
 class I2SModel(object):
     def __init__(self, dut: SimHandleBase, consts: Constants) -> None:
         self.consts = consts
-        self.mclk = dut.top.mclk
-        self.lrck = dut.top.lrck
-        self.sclk = dut.top.sclk
-        self.dac = dut.top.dac
-        self.adc = dut.top.adc
+        self.mclk = dut.mclk
+        self.lrck = dut.lrck
+        self.sclk = dut.sclk
+        self.dac = dut.dac
+        self.adc = dut.adc
 
         self.adc.value = 0
 
     async def sendAdc(self, value: Fxp) -> None:
         await RisingEdge(self.lrck)  # Only send data on high lrck
+        await cocotb.triggers.Timer(1, units="ps")  # type: ignore
 
         valueRaw = int(cast(int, value.val))
         for i in range(SERIAL_DATA_WIDTH):
@@ -217,12 +231,17 @@ async def test_project(dut: SimHandleBase):
     random.seed("fce2ab28-479d-47c7-bc6d-e530344faf14")
 
     # Parameters
-    consts = Constants(
-        nTaps=dut.top.firEngine.NTaps.value,
-        dataWidth=dut.top.firEngine.DataWidth.value,
-        clockConfigWidth=dut.top.firEngine.ClockConfigWidth.value,
-        symCoeffsWidth=1,
-    )
+    if hasattr(dut.top, "firEngine"):
+        # RTL Sim
+        consts = Constants(
+            nTaps=dut.top.firEngine.NTaps.value,
+            dataWidth=dut.top.firEngine.DataWidth.value,
+            clockConfigWidth=dut.top.firEngine.ClockConfigWidth.value,
+            symCoeffsWidth=1,
+        )
+    else:
+        # Gate Level Sim
+        consts = GATE_LEVEL_SIM_PARAMETERS
 
     clockConfig = 0
     symCoeffs = True

@@ -12,15 +12,39 @@ module tb ();
     #1;
   end
 
+  // symbolic wires for cocotb, can't attach monitors to bits of arrays
+  wire mclk;
+  wire lrck;
+  wire sclk;
+  wire dac;
+
+  reg adc;
+  reg cs;
+  reg mosi;
+  reg spiClk;
+
   // Wire up the inputs and outputs:
   reg clk;
   reg rst_n;
   reg ena;
-  reg [7:0] ui_in;
-  reg [7:0] uio_in;
+
+  wire [7:0] ui_in;
+  wire [7:0] uio_in;
   wire [7:0] uo_out;
   wire [7:0] uio_out;
   wire [7:0] uio_oe;
+
+  // Wire up symbolic wires
+  assign mclk = uio_out[0];
+  assign lrck = uio_out[1];
+  assign sclk = uio_out[2];
+  assign dac = uio_out[3];
+
+  assign uio_in[7] = adc;
+  assign ui_in[0] = cs;
+  assign ui_in[1] = mosi;
+  assign ui_in[3] = spiClk;
+
 `ifdef GL_TEST
   wire VPWR = 1'b1;
   wire VGND = 1'b0;
