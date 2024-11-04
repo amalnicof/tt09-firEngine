@@ -160,7 +160,7 @@ module fir #(
     // create select signal through filter symmetry
     if (sample_cnt == (NTaps / 2)) begin
       // Use middle sample
-      sel = samples[NTaps/2][bit_cnt];
+      sel = {1'b0,samples[NTaps/2][bit_cnt]};
     end else begin
       // Use shifted samples
       if (symCoeffs) begin

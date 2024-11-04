@@ -22,9 +22,9 @@ module I2SController #(
 
     localparam int SerialDataWidth = 24,  // Number of bits to and from the I2S2 port per sample
 
-    localparam int LrckMultiplier = 64,  // lrck is 64x times slower than sclk
-    localparam int LrckCounterMax = (LrckMultiplier / 2) - 1,
-    localparam int LrckCounterWidth = $clog2(LrckCounterMax)
+    // localparam int LrckMultiplier = 64,  // lrck is 64x times slower than sclk
+    // localparam int LrckCounterMax = (LrckMultiplier / 2) - 1,
+    // localparam int LrckCounterWidth = $clog2(LrckCounterMax)
 
 ) (
     input wire clk,
