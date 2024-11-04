@@ -204,8 +204,7 @@ module fir #(
   end
 
   // Output value
-  localparam integer yIntWidth = DataWidth+1;
-  wire signed [yIntWidth:0] yInt = yIntWidth'(accQ >>> (DataWidth - 1));
+  wire signed [DataWidth+1:0] yInt = accQ >>> (DataWidth - 1);
   wire signed [DataWidth-1:0] yIntPart = yInt[DataWidth-1:0];
   always_comb begin
     // Remove fractional bits
