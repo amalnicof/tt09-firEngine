@@ -36,8 +36,6 @@ module fir #(
     end
   endgenerate
 
-/* verilator lint_off WIDTHEXPAND */
-
   localparam integer SAMPLE_CNT_BITS = $clog2(NCoeffs);
   localparam integer BITS_CNT_BITS = $clog2(DataWidth);
 
@@ -206,9 +204,8 @@ module fir #(
   end
 
   // Output value
-  /* verilator lint_off WIDTHTRUNC */
-  wire signed [DataWidth+1:0] yInt = accQ >>> (DataWidth - 1);
-  /* verilator lint_on WIDTHTRUNC */
+  localparam integer yIntWidth = DataWidth+1;
+  wire signed [yIntWidth:0] yInt = yIntWidth'(accQ >>> (DataWidth - 1));
   wire signed [DataWidth-1:0] yIntPart = yInt[DataWidth-1:0];
   always_comb begin
     // Remove fractional bits
@@ -307,7 +304,5 @@ module fir #(
       end
     endcase
   end
-
-/* verilator lint_on WIDTHEXPAND */
 
 endmodule
