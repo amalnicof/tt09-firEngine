@@ -13,7 +13,7 @@ FIREngine is a Digital FIR filter that filters inputs from an I2S2 PMOD ADC and 
 
 ## How to test
 
-Explain how to use your project
+Use TinyTapeout Demo board to connect PMOD to Tiny Tapeout project, program filter coefficients serially, and experience the results!
 
 ## External hardware
 
