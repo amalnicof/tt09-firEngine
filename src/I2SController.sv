@@ -20,7 +20,7 @@ module I2SController #(
     parameter int ClockConfigWidth = 4,
     parameter int DataWidth = 12,  // Number of bits for ADC and DAC data
 
-    localparam int SerialDataWidth = 24,  // Number of bits to and from the I2S2 port per sample
+    localparam int SerialDataWidth = 24  // Number of bits to and from the I2S2 port per sample
 
     // localparam int LrckMultiplier = 64,  // lrck is 64x times slower than sclk
     // localparam int LrckCounterMax = (LrckMultiplier / 2) - 1,
