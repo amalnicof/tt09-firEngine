@@ -5,9 +5,6 @@
  * The size of the shift registers must be byte aligned.
  */
 
-`timescale 1ns / 1ps
-
-
 module SPISlave (
     input wire clk,
     input wire resetN,

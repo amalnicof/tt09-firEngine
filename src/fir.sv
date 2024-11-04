@@ -6,9 +6,6 @@
  * sign bit and 11 fractional bits.
  * Input and output samples are unsigned integers of size DataWidth.
  */
-
-`timescale 1ns / 1ps
-
 module fir #(
     parameter integer DataWidth = 12,
     parameter integer NTaps = 9,

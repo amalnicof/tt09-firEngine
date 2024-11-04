@@ -3,9 +3,6 @@
  *
  * Top module for the FIREngine
  */
-
-`timescale 1ns / 1ps
-
 module FIREngine #(
     parameter integer NTaps = 9,
     parameter integer DataWidth = 12,

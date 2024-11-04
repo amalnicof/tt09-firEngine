@@ -13,9 +13,6 @@
  *
  * The adc is right shifted to fit to DataWidth, and the dac is Left shifted to 24 bits
  */
-
-`timescale 1ns / 1ps
-
 module I2SController #(
     parameter int ClockConfigWidth = 4,
     parameter int DataWidth = 12,  // Number of bits for ADC and DAC data

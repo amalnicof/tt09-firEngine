@@ -3,9 +3,6 @@
  *
  * Stores configuration values using a shift register.
  */
-
-`timescale 1ns / 1ps
-
 module ConfigStore #(
     parameter integer ClockConfigWidth = 4,
     parameter integer SymCoeffsWidth   = 1,
