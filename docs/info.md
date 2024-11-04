@@ -9,7 +9,7 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-Explain how your project works
+FIREngine is a Digital FIR filter that filters inputs from an I2S2 PMOD ADC and DAC module. The purpose of this design is to filter audio from an I2S2 PMOD device found here: https://digilent.com/shop/pmod-i2s2-stereo-audio-input-and-output/. Although the number of taps the filter is not adjustable and must be determined before synthesis, the coefficients of each tap are programmable. This allows for different low, band, and high pass filters to be constructed for multiple audio filtering configurations. If is a parametrizable filter with symmetric or antisymmetric coefficients, odd number of taps. Uses 2s complement and fixed-point data. Coefficients are set via an SDI Interface. 
 
 ## How to test
 
@@ -17,4 +17,5 @@ Explain how to use your project
 
 ## External hardware
 
-List external hardware used in your project (e.g. PMOD, LED display, etc), if any
+- I2S2 PMOD device: https://digilent.com/shop/pmod-i2s2-stereo-audio-input-and-output/
+- Serial programmer
