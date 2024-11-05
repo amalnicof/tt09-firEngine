@@ -39,7 +39,7 @@ module tt_um_arandomdev_fir_engine_top (
   assign uo_out = 8'b0;
 
   FIREngine #(
-      .NTaps(11),
+      .NTaps(13),
       .DataWidth(8)
   ) firEngine (
       .clk(clk),

@@ -66,7 +66,7 @@ class Constants(object):
 
 
 GATE_LEVEL_SIM_PARAMETERS = Constants(
-    nTaps=11,
+    nTaps=13,
     dataWidth=8,
     clockConfigWidth=4,
     symCoeffsWidth=1,
