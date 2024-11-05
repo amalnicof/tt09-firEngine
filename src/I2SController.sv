@@ -2,9 +2,8 @@
  * Module `I2SController`
  *
  * Controls the ADC and DAC on the I2S2 Pmod module. The specific ICs are the CS5343 and CS4344.
- * The MCLK is the same as the system clock. Both SCLK and LRCK are derived from MCLK.
- * SCLK is set 64 times faster than LRCK. Both the ADC and DAC are run at the same sampling
- * frequency.
+ * The MCLK is generated though a clock divider. The SCLK is 64X slower than MCLK and LRCK is 256X
+ * slower than MCLK.
  *
  * The supported sampling frequency can be configured using the `clockConfig` port. The equation
  * below can be used to calculate the sampling frequency.
@@ -13,16 +12,12 @@
  *
  * The adc is right shifted to fit to DataWidth, and the dac is Left shifted to 24 bits
  */
+
 module I2SController #(
     parameter int ClockConfigWidth = 4,
     parameter int DataWidth = 12,  // Number of bits for ADC and DAC data
 
     localparam int SerialDataWidth = 24  // Number of bits to and from the I2S2 port per sample
-
-    // localparam int LrckMultiplier = 64,  // lrck is 64x times slower than sclk
-    // localparam int LrckCounterMax = (LrckMultiplier / 2) - 1,
-    // localparam int LrckCounterWidth = $clog2(LrckCounterMax)
-
 ) (
     input wire clk,
     input wire resetN,

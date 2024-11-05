@@ -59,6 +59,6 @@ module tt_um_arandomdev_fir_engine_top (
   );
 
   // List all unused inputs to prevent warnings
-  wire _unused = &{ena, uio_in[6:0], ui_in[2], ui_in[7:4], uio_out[7], 1'b0};
+  wire _unused = &{ena, uio_in[6:0], ui_in[2], ui_in[7:4], 1'b0};
 
 endmodule

@@ -6,6 +6,7 @@
  * sign bit and 11 fractional bits.
  * Input and output samples are unsigned integers of size DataWidth.
  */
+
 module fir #(
     parameter integer DataWidth = 12,
     parameter integer NTaps = 9,
@@ -63,7 +64,7 @@ module fir #(
         for (integer i = 0; i < NTaps - 1; i++) begin
           samples[i+1] <= samples[i];
         end
-      end else if (sft && sample_cnt != (NTaps / 2)) begin
+      end else if (sft && sample_cnt != SAMPLE_CNT_BITS'(NTaps / 2)) begin
         // Split the LSFR in 2
         // x1 x2 x3 x4 | x5 | x6 x7 x8 x9
         // x2 x3 x4 x1 | x5 | x9 x6 x7 x8
@@ -140,7 +141,7 @@ module fir #(
     if (!rstN) begin
       bit_cnt <= 'd0;
     end else begin
-      if ((bit_cnt_en == 1'b1) && (bit_cnt < DataWidth - 1)) begin
+      if ((bit_cnt_en == 1'b1) && (bit_cnt < BITS_CNT_BITS'(DataWidth - 1))) begin
         bit_cnt <= bit_cnt + 1'b1;
       end else begin
         bit_cnt <= 'd0;
@@ -155,9 +156,9 @@ module fir #(
   logic signed [AccumulatorWidth-1:0] accQ;
   always_comb begin
     // create select signal through filter symmetry
-    if (sample_cnt == (NTaps / 2)) begin
+    if (sample_cnt == SAMPLE_CNT_BITS'(NTaps / 2)) begin
       // Use middle sample
-      sel = {1'b0,samples[NTaps/2][bit_cnt]};
+      sel = {1'b0, samples[NTaps/2][bit_cnt]};
     end else begin
       // Use shifted samples
       if (symCoeffs) begin
@@ -175,14 +176,14 @@ module fir #(
 
     // MUX
     case (sel)
-      2'b00:   mux_out = 2'd0;
-      2'b01:   mux_out = AccumulatorWidth'(coeffs[0] << bit_cnt);
-      2'b10:   mux_out = AccumulatorWidth'(coeffs[0] << (bit_cnt + 1));
-      2'b11:   mux_out = AccumulatorWidth'(-(coeffs[0] << bit_cnt));
-      default: mux_out = 2'b0;
+      2'b00:   mux_out = AccumulatorWidth'(0);
+      2'b01:   mux_out = AccumulatorWidth'(coeffs[0]) << bit_cnt;
+      2'b10:   mux_out = AccumulatorWidth'(coeffs[0]) << (bit_cnt + 1);
+      2'b11:   mux_out = -(AccumulatorWidth'(coeffs[0]) << bit_cnt);
+      default: mux_out = AccumulatorWidth'(0);
     endcase
 
-    if (bit_cnt == DataWidth - 1) begin
+    if (bit_cnt == BITS_CNT_BITS'(DataWidth - 1)) begin
       // Sign should be subtraction
       acc_in = accQ - mux_out;
     end else begin
@@ -204,14 +205,15 @@ module fir #(
   end
 
   // Output value
-  wire signed [DataWidth+1:0] yInt = accQ >>> (DataWidth - 1);
+  localparam integer yIntWidth = DataWidth + 2;
+  wire signed [yIntWidth-1:0] yInt = yIntWidth'(accQ >>> (DataWidth - 1));
   wire signed [DataWidth-1:0] yIntPart = yInt[DataWidth-1:0];
   always_comb begin
     // Remove fractional bits
     // truncate to DataWidth, saturating
-    if (yInt > DataMax) begin
+    if (yInt > yIntWidth'(DataMax)) begin
       y = DataMax;
-    end else if (yInt < DataMin) begin
+    end else if (yInt < yIntWidth'(DataMin)) begin
       y = DataMin;
     end else begin
       y = yIntPart;
@@ -257,12 +259,12 @@ module fir #(
       end
 
       OP: begin
-        if (bit_cnt < DataWidth - 2) n_state = OP;
+        if (bit_cnt < BITS_CNT_BITS'(DataWidth - 2)) n_state = OP;
         else n_state = SHIFT;
       end
 
       SHIFT: begin
-        if (sample_cnt < NCoeffs - 1) n_state = OP;
+        if (sample_cnt < SAMPLE_CNT_BITS'(NCoeffs - 1)) n_state = OP;
         else n_state = IDLE;
       end
 

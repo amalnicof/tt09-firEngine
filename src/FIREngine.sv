@@ -3,6 +3,7 @@
  *
  * Top module for the FIREngine
  */
+
 module FIREngine #(
     parameter integer NTaps = 9,
     parameter integer DataWidth = 12,

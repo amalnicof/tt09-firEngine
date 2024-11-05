@@ -3,6 +3,7 @@
  *
  * Stores configuration values using a shift register.
  */
+
 module ConfigStore #(
     parameter integer ClockConfigWidth = 4,
     parameter integer SymCoeffsWidth   = 1,
