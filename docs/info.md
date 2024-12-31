@@ -18,8 +18,11 @@ Use TinyTapeout Demo board to connect PMOD to Tiny Tapeout project, program filt
 - Either symmetric or asymmetric
 - 11 Taps (6 filter coefficients)
 - 8 bit cofficients, having format SFix<1,7>
+
 SPI Data transimission starts from the MSB of the first byte (right-most) where bytes are ordered:
+
 {coeff[5],...,coeff[0],SYM_COEFFS,clockConfig}
+
 Examples of this SPI communication can be seen in the Cocotb test (test/test.py) or in our script used to program the test implementation on FPGA through SPI ([SPI Script](https://github.com/amalnicof/tinytapeout_09_cadence/blob/main/scripts/config.py)).
 
 ## External hardware
